@@ -1,4 +1,4 @@
-package com.ufpb.swiftmanga.src.dto;
+package com.ufpb.SwiftManga.src.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

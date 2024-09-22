@@ -1,4 +1,4 @@
-package com.ufpb.swiftmanga.src.service;
+package com.ufpb.SwiftManga.src.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.ufpb.swiftmanga.src.dto.HQDto;
-import com.ufpb.swiftmanga.src.model.HQ;
-import com.ufpb.swiftmanga.src.repository.HQRepository;
+import com.ufpb.SwiftManga.src.dto.HQDto;
+import com.ufpb.SwiftManga.src.model.HQ;
+import com.ufpb.SwiftManga.src.repository.HQRepository;
 
 @Service
 public class HQService {

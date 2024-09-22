@@ -1,4 +1,4 @@
-package com.ufpb.swiftmanga.src.dto;
+package com.ufpb.SwiftManga.src.dto;
 
 import java.util.List;
 

@@ -1,11 +1,11 @@
-package com.ufpb.swiftmanga.src.config;
+package com.ufpb.SwiftManga.src.config;
 
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.ufpb.swiftmanga.src.model.User;
-import com.ufpb.swiftmanga.src.repository.UserRepository;
+import com.ufpb.SwiftManga.src.model.User;
+import com.ufpb.SwiftManga.src.repository.UserRepository;
 
 import jakarta.annotation.PostConstruct;
 

@@ -1,11 +1,9 @@
 import './App.css';
-import './components/Login/Login'
-import './components/Login/Login';
-import { Login } from './components/Login/Login';
+import {Outlet} from "react-router-dom"
 
 function App() {
   return (
-    <Login></Login>
+    <Outlet></Outlet>
   );
 }
 

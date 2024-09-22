@@ -1,16 +1,17 @@
-package com.ufpb.swiftmanga.src.service;
+package com.ufpb.SwiftManga.src.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ufpb.swiftmanga.src.dto.UserDto;
-import com.ufpb.swiftmanga.src.model.User;
-import com.ufpb.swiftmanga.src.repository.UserRepository;
+import com.ufpb.SwiftManga.src.dto.UserDto;
+import com.ufpb.SwiftManga.src.model.User;
+import com.ufpb.SwiftManga.src.repository.UserRepository;
 
 @Service
 public class UserService {
@@ -20,6 +21,8 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public UserDto createUser(UserDto userDto) {
         User user = new User();
@@ -63,5 +66,15 @@ public class UserService {
 
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+    public void changePassword(Long userId, String oldPassword, String newPassword) throws Exception {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new br.ufpb.dcx.hellospring.exception.ItemNotFoundException("Usuário " + userId + " não encontrado"));
+        if (!bCryptPasswordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new Exception("Senha antiga incorreta");
+        }
+        user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }

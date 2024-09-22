@@ -1,4 +1,4 @@
-package com.ufpb.swiftmanga;
+package com.ufpb.SwiftManga;
 
 
 import org.modelmapper.ModelMapper;

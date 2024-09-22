@@ -1,4 +1,4 @@
-package com.ufpb.swiftmanga.src.model;
+package com.ufpb.SwiftManga.src.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
