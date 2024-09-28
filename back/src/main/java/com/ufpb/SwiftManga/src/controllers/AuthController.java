@@ -39,7 +39,7 @@ public class AuthController {
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequestDTO.getUsername());
         String token = jwtUtil.generateToken(userDetails);
-        return new TokenResponseDTO();
+        return new TokenResponseDTO(token);
     }
 
     @PostMapping("/change-password")
