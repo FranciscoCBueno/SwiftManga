@@ -18,16 +18,10 @@ public class MangaService {
     private MangaRepository mangaRepository;
 
     public MangaDto createManga(MangaDto mangaDto) {
-        Manga manga = new Manga();
-        manga.setTitle(mangaDto.getTitle());
-        manga.setAuthor(mangaDto.getAuthor());
-        manga.setVolume(mangaDto.getVolume());
-        manga.setClassification(mangaDto.getClassification());
-        mangaRepository.save(manga);
-        return mangaDto; // Conversion to DTO should be implemented
+         return toDto(mangaRepository.save(toManga(mangaDto)));
     }
 
-    public List<MangaDto> getAllMangas() {
+    public List<MangaDto> getAllManga() {
         return mangaRepository.findAll().stream().map(manga -> {
             MangaDto dto = new MangaDto();
             dto.setId(manga.getId());
@@ -40,15 +34,8 @@ public class MangaService {
     }
 
     public MangaDto getMangaById(Long mangaId) {
-        Manga manga = mangaRepository.findById(mangaId)
-            .orElseThrow(() -> new ResourceNotFoundException("Manga not found with id: " + mangaId));
-        MangaDto dto = new MangaDto();
-        dto.setId(manga.getId());
-        dto.setTitle(manga.getTitle());
-        dto.setAuthor(manga.getAuthor());
-        dto.setVolume(manga.getVolume());
-        dto.setClassification(manga.getClassification());
-        return dto;
+        return toDto(mangaRepository.findById(mangaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Manga not found with id: " + mangaId)));
     }
 
     public MangaDto updateManga(Long mangaId, MangaDto mangaDto) {
@@ -64,5 +51,24 @@ public class MangaService {
 
     public void deleteManga(Long mangaId) {
         mangaRepository.deleteById(mangaId);
+    }
+
+    public Manga toManga (MangaDto mangaDto) {
+        Manga manga = new Manga();
+        manga.setTitle(mangaDto.getTitle());
+        manga.setAuthor(mangaDto.getAuthor());
+        manga.setVolume(mangaDto.getVolume());
+        manga.setClassification(mangaDto.getClassification());
+        return manga;
+    }
+
+    public MangaDto toDto (Manga manga) {
+        MangaDto dto = new MangaDto();
+        dto.setId(manga.getId());
+        dto.setTitle(manga.getTitle());
+        dto.setAuthor(manga.getAuthor());
+        dto.setVolume(manga.getVolume());
+        dto.setClassification(manga.getClassification());
+        return dto;
     }
 }

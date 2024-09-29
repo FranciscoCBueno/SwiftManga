@@ -1,4 +1,4 @@
-package br.ufpb.dcx.hellospring.exception;
+package com.ufpb.SwiftManga.src.exception;
 
 public class ValidationError {
     private final String field;

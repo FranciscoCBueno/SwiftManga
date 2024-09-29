@@ -18,14 +18,7 @@ public class HQService {
     private HQRepository hqRepository;
 
     public HQDto createHQ(HQDto hqDto) {
-        HQ hq = new HQ();
-        hq.setTitle(hqDto.getTitle());
-        hq.setArtist(hqDto.getArtist());
-        hq.setPublisher(hqDto.getPublisher());
-        hq.setIssue(hqDto.getIssue());
-        hq.setClassification(hqDto.getClassification());
-        hqRepository.save(hq);
-        return hqDto; // Conversion to DTO should be implemented
+        return toDto(hqRepository.save(toHQ(hqDto)));
     }
 
     public List<HQDto> getAllHQs() {
@@ -42,16 +35,8 @@ public class HQService {
     }
 
     public HQDto getHQById(Long hqId) {
-        HQ hq = hqRepository.findById(hqId)
-            .orElseThrow(() -> new ResourceNotFoundException("HQ not found with id: " + hqId));
-        HQDto dto = new HQDto();
-        dto.setId(hq.getId());
-        dto.setTitle(hq.getTitle());
-        dto.setArtist(hq.getArtist());
-        dto.setPublisher(hq.getPublisher());
-        dto.setIssue(hq.getIssue());
-        dto.setClassification(hq.getClassification());
-        return dto;
+        return toDto(hqRepository.findById(hqId)
+                .orElseThrow(() -> new ResourceNotFoundException("HQ not found with id: " + hqId)));
     }
 
     public HQDto updateHQ(Long hqId, HQDto hqDto) {
@@ -68,5 +53,26 @@ public class HQService {
 
     public void deleteHQ(Long hqId) {
         hqRepository.deleteById(hqId);
+    }
+
+    public HQDto toDto(HQ hq) {
+        HQDto dto = new HQDto();
+        dto.setId(hq.getId());
+        dto.setTitle(hq.getTitle());
+        dto.setArtist(hq.getArtist());
+        dto.setPublisher(hq.getPublisher());
+        dto.setIssue(hq.getIssue());
+        dto.setClassification(hq.getClassification());
+        return dto;
+    }
+
+    public HQ toHQ(HQDto hqDto) {
+        HQ hq = new HQ();
+        hq.setTitle(hqDto.getTitle());
+        hq.setArtist(hqDto.getArtist());
+        hq.setPublisher(hqDto.getPublisher());
+        hq.setIssue(hqDto.getIssue());
+        hq.setClassification(hqDto.getClassification());
+        return hq;
     }
 }

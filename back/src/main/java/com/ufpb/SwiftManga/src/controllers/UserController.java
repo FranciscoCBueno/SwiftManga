@@ -33,9 +33,9 @@ public class UserController {
         return userService.createUser(userDto);
     }
 
-    @PutMapping(path="/updateUser")
-    public UserDto updateUser(@RequestBody @Valid UserDto user) {
-        return userService.updateUser(user.getId(), user);
+    @PutMapping(path="/updateUser/{userId}")
+    public UserDto updateUser(@PathVariable Long userId, @RequestBody @Valid UserDto user) {
+        return userService.updateUser(userId, user);
     }
 
     @ResponseStatus(HttpStatus.OK)
