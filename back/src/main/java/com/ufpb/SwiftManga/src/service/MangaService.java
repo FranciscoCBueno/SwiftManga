@@ -1,9 +1,7 @@
 package com.ufpb.SwiftManga.src.service;
 
-import com.ufpb.SwiftManga.src.dto.GenreDTO;
 import com.ufpb.SwiftManga.src.dto.HQDTO;
 import com.ufpb.SwiftManga.src.dto.MangaDTO;
-import com.ufpb.SwiftManga.src.model.Genre;
 import com.ufpb.SwiftManga.src.model.HQ;
 import com.ufpb.SwiftManga.src.model.Manga;
 import com.ufpb.SwiftManga.src.model.User;
@@ -58,7 +56,6 @@ public MangaDTO convertToDTO(Manga manga) {
     mangaDTO.setLanguage(manga.getLanguage());
     mangaDTO.setReleaseDate(manga.getReleaseDate());
     mangaDTO.setUserId(manga.getUser().getId());
-    // Assuma que você está incluindo os gêneros corretamente
     return mangaDTO;
 }
 
@@ -83,19 +80,11 @@ public MangaDTO convertToDTO(Manga manga) {
         manga.setTags(mangaDTO.getTags());                 // Incluindo as tags
         manga.setLanguage(mangaDTO.getLanguage());         // Incluindo o idioma
         manga.setReleaseDate(mangaDTO.getReleaseDate());   // Incluindo a data de lançamento
-    
         // Buscar e configurar o usuário associado ao Manga
         User user = userRepository.findById(mangaDTO.getUserId())
                                   .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         manga.setUser(user);
     
         return manga;
-    }
-
-    private GenreDTO convertGenreToDTO(Genre genre) {
-        GenreDTO genreDTO = new GenreDTO();
-        genreDTO.setId(genre.getId());
-        genreDTO.setName(genre.getName());
-        return genreDTO;
     }
 }

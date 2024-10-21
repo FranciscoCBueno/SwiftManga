@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.Set;
 
-import com.ufpb.SwiftManga.src.model.Manga.Classification;
+import com.ufpb.SwiftManga.src.enums.Classification;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +18,6 @@ public class MangaDTO {
     private String author;
     private Integer volume;
     private Classification classification;  // Alterar de String para enum Classification
-    private Set<GenreDTO> genres;  // Relacionamento com gêneros
     private LocalDate releaseDate;
     private String description;
     private String tags;

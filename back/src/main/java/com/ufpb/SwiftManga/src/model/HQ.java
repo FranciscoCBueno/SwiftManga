@@ -1,5 +1,6 @@
 package com.ufpb.SwiftManga.src.model;
 
+import com.ufpb.SwiftManga.src.enums.Classification;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -70,13 +71,9 @@ public class HQ {
     @NotNull(message = "A data de lançamento é obrigatória.")
     private LocalDate releaseDate;
 
-    @ManyToMany
-    @JoinTable(name = "hq_genre", joinColumns = @JoinColumn(name = "hq_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
-    private Set<Genre> genres = new HashSet<>();
-
     private boolean isDeleted = false;
 
-    public enum Classification {
-        POSSUIDO, DESEJADO, LIDO, EMPRESTADO;
-    }
+//    public enum Classification {
+//        POSSUIDO, DESEJADO, LIDO, EMPRESTADO;
+//    }
 }

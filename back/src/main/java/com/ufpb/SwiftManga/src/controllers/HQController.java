@@ -36,14 +36,14 @@ public class HQController {
         return ResponseEntity.status(201).body(createdHQ); // Retorna 201 Created
     }
 
-    @PutMapping("/{hqId}")
+    @PutMapping("/update/{hqId}")
     public ResponseEntity<HQDTO> updateHQ(@PathVariable Long hqId, @RequestBody HQDTO hqDTO) {
         hqDTO.setId(hqId);
         HQDTO updatedHQ = hqService.saveHQ(hqDTO);
         return ResponseEntity.ok(updatedHQ);
     }
 
-    @DeleteMapping("/{hqId}")
+    @DeleteMapping("/delete/{hqId}")
     public String deleteHQ(@PathVariable Long hqId) {
         hqService.deleteHQ(hqId);
         return "HQ removida com sucesso.";

@@ -35,14 +35,14 @@ public class MangaController {
         return ResponseEntity.ok(savedManga);
     }
     
-    @PutMapping("/{mangaId}")
+    @PutMapping("/update/{mangaId}")
     public ResponseEntity<MangaDTO> updateManga(@PathVariable Long mangaId, @RequestBody @Valid MangaDTO mangaDTO) {
         mangaDTO.setId(mangaId);  // Garante que o ID será o correto na atualização
         MangaDTO updatedManga = mangaService.saveManga(mangaDTO);
         return ResponseEntity.ok(updatedManga);
     }
 
-    @DeleteMapping("/{mangaId}")
+    @DeleteMapping("/delete/{mangaId}")
     public String deleteManga(@PathVariable Long mangaId) {
         mangaService.deleteManga(mangaId);
         return "Mangá removido com sucesso.";

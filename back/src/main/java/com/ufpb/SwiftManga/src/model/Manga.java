@@ -10,7 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
+import com.ufpb.SwiftManga.src.enums.Classification;
 
 @Data
 @Entity
@@ -60,17 +60,9 @@ public class Manga {
     @NotNull(message = "A data de lançamento é obrigatória.")
     private LocalDate releaseDate;
 
-    @ManyToMany
-    @JoinTable(
-        name = "manga_genre",
-        joinColumns = @JoinColumn(name = "manga_id"),
-        inverseJoinColumns = @JoinColumn(name = "genre_id")
-    )
-    private Set<Genre> genres;
-
     private boolean isDeleted = false;
 
-    public enum Classification {
-        POSSUIDO, DESEJADO, LIDO, EMPRESTADO;
-    }
+//    public enum Classification {
+//        POSSUIDO, DESEJADO, LIDO, EMPRESTADO;
+//    }
 }

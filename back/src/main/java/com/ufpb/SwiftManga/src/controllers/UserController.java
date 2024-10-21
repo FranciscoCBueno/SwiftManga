@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
-public class UserController {
+public class  UserController {
 
     @Autowired
     private UserService userService;
@@ -31,23 +31,23 @@ public class UserController {
         return userService.findByEmail(email);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO userDTO) {
         UserDTO createdUser = userService.saveUser(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
     
-    @PutMapping("/{userId}")
+    @PutMapping("/update/{userId}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @RequestBody @Valid UserDTO userDTO) {
         userDTO.setId(userId);  // Garante que o ID será o correto na atualização
         UserDTO updatedUser = userService.saveUser(userDTO);
         return ResponseEntity.ok(updatedUser); // Retorna 200 OK
     }
-    
 
-    @DeleteMapping("/{userId}")
-    public String deleteUser(@PathVariable Long userId) {
+
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
-        return "Usuário removido com sucesso.";
+        return ResponseEntity.ok("Usuário removido com sucesso.");
     }
 }
