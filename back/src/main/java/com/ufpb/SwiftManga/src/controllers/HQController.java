@@ -1,45 +1,51 @@
 package com.ufpb.SwiftManga.src.controllers;
 
-import com.ufpb.SwiftManga.src.dto.HQDto;
+import com.ufpb.SwiftManga.src.dto.HQDTO;
 import com.ufpb.SwiftManga.src.service.HQService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping(path="/api")
+@RequestMapping("/api/hqs")
 public class HQController {
-    private final HQService hqService;
 
-    public HQController(HQService hqService) {
-        this.hqService = hqService;
+    @Autowired
+    private HQService hqService;
+
+
+    @GetMapping("/user/{userId}")
+    public List<HQDTO> getHQsByUserId(@PathVariable Long userId) {
+        return hqService.findAllByUserId(userId);
     }
 
-    @GetMapping(path="/hq")
-    public List<HQDto> listHQs() {
-        return hqService.getAllHQs();
+    @GetMapping("/{hqId}")
+    public Optional<HQDTO> getHQById(@PathVariable Long hqId) {
+        return hqService.findById(hqId);
     }
 
-    @GetMapping(path="/hq/{hqId}")
-    public HQDto getHQById(@PathVariable Long hqId) {
-        return hqService.getHQById(hqId);
+    @PostMapping
+    public ResponseEntity<HQDTO> createHQ(@RequestBody HQDTO hqDTO) {
+        HQDTO createdHQ = hqService.saveHQ(hqDTO);
+        return ResponseEntity.status(201).body(createdHQ); // Retorna 201 Created
     }
 
-    @PostMapping(path="/createHQ")
-    public HQDto createHQ(@RequestBody @Valid HQDto hqDto) {
-        return hqService.createHQ(hqDto);
+    @PutMapping("/{hqId}")
+    public ResponseEntity<HQDTO> updateHQ(@PathVariable Long hqId, @RequestBody HQDTO hqDTO) {
+        hqDTO.setId(hqId);
+        HQDTO updatedHQ = hqService.saveHQ(hqDTO);
+        return ResponseEntity.ok(updatedHQ);
     }
 
-    @PutMapping(path="/updateHQ/{hqId}")
-    public HQDto updateHQ(@PathVariable Long hqId, @RequestBody @Valid HQDto hq) {
-        return hqService.updateHQ(hqId, hq);
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping(path="deleteHQ/{hqId}")
-    public void deleteHQ(@PathVariable Long hqId) {
+    @DeleteMapping("/{hqId}")
+    public String deleteHQ(@PathVariable Long hqId) {
         hqService.deleteHQ(hqId);
+        return "HQ removida com sucesso.";
     }
 }

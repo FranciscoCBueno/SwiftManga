@@ -1,46 +1,53 @@
 package com.ufpb.SwiftManga.src.controllers;
 
-
-import com.ufpb.SwiftManga.src.dto.UserDto;
+import com.ufpb.SwiftManga.src.dto.UserDTO;
 import com.ufpb.SwiftManga.src.service.UserService;
+
 import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping(path="/api")
+@RequestMapping("/api/users")
 public class UserController {
-    private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
+        Optional<UserDTO> userDTO = userService.findById(userId);
+        return userDTO.map(ResponseEntity::ok)
+                      .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping(path="/users")
-    public List<UserDto> listUsers() {
-        return userService.getAllUsers();
+    @GetMapping("/email/{email}")
+    public Optional<UserDTO> getUserByEmail(@PathVariable String email) {
+        return userService.findByEmail(email);
     }
 
-    @GetMapping(path="/user/{userId}")
-    public UserDto getUserById(@PathVariable Long userId) {
-        return userService.getUserById(userId);
+    @PostMapping
+    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO userDTO) {
+        UserDTO createdUser = userService.saveUser(userDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
-
-    @PostMapping(path="/createUser")
-    public UserDto createUser(@RequestBody @Valid UserDto userDto) {
-        return userService.createUser(userDto);
+    
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @RequestBody @Valid UserDTO userDTO) {
+        userDTO.setId(userId);  // Garante que o ID será o correto na atualização
+        UserDTO updatedUser = userService.saveUser(userDTO);
+        return ResponseEntity.ok(updatedUser); // Retorna 200 OK
     }
+    
 
-    @PutMapping(path="/updateUser/{userId}")
-    public UserDto updateUser(@PathVariable Long userId, @RequestBody @Valid UserDto user) {
-        return userService.updateUser(userId, user);
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping(path="deleteUser/{userId}")
-    public void deleteUser(@PathVariable Long userId) {
+    @DeleteMapping("/{userId}")
+    public String deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
+        return "Usuário removido com sucesso.";
     }
 }

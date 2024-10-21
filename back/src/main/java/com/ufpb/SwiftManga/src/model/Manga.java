@@ -1,79 +1,76 @@
 package com.ufpb.SwiftManga.src.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
+
+@Data
 @Entity
-@Table(name = "mangas")
+@Table(name = "mangas", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"title", "volume", "user_id"})
+})
 public class Manga {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
-    private String author;
-    private Integer volume;
-    private String classification; // Ex: possuído, desejado, etc.
 
-    // Relacionamento com User
-    @ManyToOne
+    @NotNull(message = "O título é obrigatório.")
+    @Size(min = 1, max = 255, message = "O título deve ter entre 1 e 255 caracteres.")
+    private String title;
+
+    @NotNull(message = "O autor é obrigatório.")
+    @Size(min = 1, max = 255, message = "O autor deve ter entre 1 e 255 caracteres.")
+    private String author;
+
+    @NotNull(message = "O volume é obrigatório.")
+    @Positive(message = "O volume deve ser um número positivo.")
+    private Integer volume;
+
+    @NotNull(message = "A classificação é obrigatória.")
+    @Enumerated(EnumType.STRING)
+    private Classification classification;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Long getId() {
-        return id;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    @NotNull(message = "A descrição é obrigatória.")
+    private String description;
+
+    @NotNull(message = "As tags são obrigatórias.")
+    private String tags;
+
+    @NotNull(message = "O idioma é obrigatório.")
+    private String language;
+
+    @NotNull(message = "A data de lançamento é obrigatória.")
+    private LocalDate releaseDate;
+
+    @ManyToMany
+    @JoinTable(
+        name = "manga_genre",
+        joinColumns = @JoinColumn(name = "manga_id"),
+        inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private Set<Genre> genres;
+
+    private boolean isDeleted = false;
+
+    public enum Classification {
+        POSSUIDO, DESEJADO, LIDO, EMPRESTADO;
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public Integer getVolume() {
-        return volume;
-    }
-
-    public void setVolume(Integer volume) {
-        this.volume = volume;
-    }
-
-    public String getClassification() {
-        return classification;
-    }
-
-    public void setClassification(String classification) {
-        this.classification = classification;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    // Getters e setters
-
-    
 }
-

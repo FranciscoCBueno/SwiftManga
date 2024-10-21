@@ -7,8 +7,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.ufpb.SwiftManga.src.exception.ItemNotFoundException;
-import com.ufpb.SwiftManga.src.exception.ErrorResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;

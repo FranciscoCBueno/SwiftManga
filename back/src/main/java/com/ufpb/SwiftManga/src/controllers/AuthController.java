@@ -45,6 +45,7 @@ public class AuthController {
     @PostMapping("/change-password")
     public String changePassword(@RequestBody ChangePasswordRequestDTO changePasswordRequestDTO) {
         try {
+            // Verifica e atualiza a senha usando o serviço de usuários
             userService.changePassword(
                     changePasswordRequestDTO.getUserId(),
                     changePasswordRequestDTO.getOldPassword(),

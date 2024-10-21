@@ -1,45 +1,50 @@
 package com.ufpb.SwiftManga.src.controllers;
 
-import com.ufpb.SwiftManga.src.dto.MangaDto;
+import com.ufpb.SwiftManga.src.dto.MangaDTO;
 import com.ufpb.SwiftManga.src.service.MangaService;
+
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping(path="/api")
+@RequestMapping("/api/mangas")
 public class MangaController {
-    private final MangaService mangaService;
 
-    public MangaController(MangaService mangaService) {
-        this.mangaService = mangaService;
+    @Autowired
+    private MangaService mangaService;
+
+    @GetMapping("/user/{userId}")
+    public List<MangaDTO> getMangasByUserId(@PathVariable Long userId) {
+        return mangaService.findAllByUserId(userId);
     }
 
-    @GetMapping(path="/manga")
-    public List<MangaDto> listMangas() {
-        return mangaService.getAllManga();
+    @GetMapping("/{mangaId}")
+    public Optional<MangaDTO> getMangaById(@PathVariable Long mangaId) {
+        return mangaService.findById(mangaId);
     }
 
-    @GetMapping(path="/manga/{mangaId}")
-    public MangaDto getMangaById(@PathVariable Long mangaId) {
-        return mangaService.getMangaById(mangaId);
+    @PostMapping
+    public ResponseEntity<MangaDTO> createManga(@RequestBody @Valid MangaDTO mangaDTO) {
+        MangaDTO savedManga = mangaService.saveManga(mangaDTO);
+        return ResponseEntity.ok(savedManga);
+    }
+    
+    @PutMapping("/{mangaId}")
+    public ResponseEntity<MangaDTO> updateManga(@PathVariable Long mangaId, @RequestBody @Valid MangaDTO mangaDTO) {
+        mangaDTO.setId(mangaId);  // Garante que o ID será o correto na atualização
+        MangaDTO updatedManga = mangaService.saveManga(mangaDTO);
+        return ResponseEntity.ok(updatedManga);
     }
 
-    @PostMapping(path="/createManga")
-    public MangaDto createManga(@RequestBody @Valid MangaDto mangaDto) {
-        return mangaService.createManga(mangaDto);
-    }
-
-    @PutMapping(path="/updateManga/{mangaId}")
-    public MangaDto updateManga(@PathVariable Long mangaId, @RequestBody @Valid MangaDto manga) {
-        return mangaService.updateManga(mangaId, manga);
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping(path="deleteManga/{mangaId}")
-    public void deleteManga(@PathVariable Long mangaId) {
+    @DeleteMapping("/{mangaId}")
+    public String deleteManga(@PathVariable Long mangaId) {
         mangaService.deleteManga(mangaId);
+        return "Mangá removido com sucesso.";
     }
 }

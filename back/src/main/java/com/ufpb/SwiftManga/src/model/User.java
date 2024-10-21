@@ -1,93 +1,66 @@
 package com.ufpb.SwiftManga.src.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.time.LocalDateTime;
+import java.util.Set;
+
+import java.util.HashSet;
+
+@Data
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull(message = "O nome é obrigatório.")
+    @Size(min = 1, max = 255, message = "O nome deve ter entre 1 e 255 caracteres.")
     private String username;
-    private String password; // Considerar hashing de senha no futuro
+
+    @NotNull(message = "O e-mail é obrigatório.")
+    @Email(message = "Formato de e-mail inválido.")
+    @Size(min = 1, max = 255, message = "O e-mail deve ter no mínimo 1 e máximo 255 caracteres.")
     private String email;
 
-    // Relacionamento com Mangas
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Manga> mangas;
+    @NotNull(message = "A senha é obrigatória.")
+    @Size(min = 8, message = "A senha deve ter no mínimo 8 caracteres.")
+    private String password;
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<HQ> hqs;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonIgnore // Ignora para evitar o loop
+    private Set<Manga> mangas = new HashSet<>();
 
-    public Long getId() {
-        return id;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonIgnore // Ignora para evitar o loop
+    private Set<HQ> hqs = new HashSet<>();
+
+    public void setPassword(String rawPassword) {
+        this.password = hashPassword(rawPassword); // Hash da senha antes de armazená-la
     }
 
-
-    public void setId(Long id) {
-        this.id = id;
+    private String hashPassword(String rawPassword) {
+        return BCrypt.hashpw(rawPassword, BCrypt.gensalt());
     }
 
-
-    public String getUsername() {
-        return username;
+    public boolean checkPassword(String rawPassword) {
+        return BCrypt.checkpw(rawPassword, this.password);
     }
-
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-
-    public String getPassword() {
-        return password;
-    }
-
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
-    public String getEmail() {
-        return email;
-    }
-
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-
-    public List<Manga> getMangas() {
-        return mangas;
-    }
-
-
-    public void setMangas(List<Manga> mangas) {
-        this.mangas = mangas;
-    }
-
-
-    public List<HQ> getHqs() {
-        return hqs;
-    }
-
-
-    public void setHqs(List<HQ> hqs) {
-        this.hqs = hqs;
-    }
-
-    // Getters e setters
-    
 }
+

@@ -2,11 +2,36 @@ package com.ufpb.SwiftManga.src.dto;
 
 import java.util.Objects;
 
+import java.util.Set;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDTOResponse {
     private Long id;
     private String nome;
     private String email;
     private String username;
+    private Set<MangaDTO> mangas;
+    private Set<HQDTO> hqs;
+
+    // getters and setters for new fields
+    public Set<MangaDTO> getMangas() {
+        return mangas;
+    }
+
+    public void setMangas(Set<MangaDTO> mangas) {
+        this.mangas = mangas;
+    }
+
+    public Set<HQDTO> getHqs() {
+        return hqs;
+    }
+
+    public void setHqs(Set<HQDTO> hqs) {
+        this.hqs = hqs;
+    }
 
     public Long getId() {
         return id;

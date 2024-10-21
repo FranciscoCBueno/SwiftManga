@@ -1,15 +1,20 @@
 package com.ufpb.SwiftManga.src.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.ufpb.SwiftManga.src.dto.GenreDTO;
+import com.ufpb.SwiftManga.src.dto.HQDTO;
+import com.ufpb.SwiftManga.src.dto.MangaDTO;
+import com.ufpb.SwiftManga.src.model.Genre;
+import com.ufpb.SwiftManga.src.model.HQ;
+import com.ufpb.SwiftManga.src.model.Manga;
+import com.ufpb.SwiftManga.src.model.User;
+import com.ufpb.SwiftManga.src.repository.MangaRepository;
+import com.ufpb.SwiftManga.src.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.ufpb.SwiftManga.src.dto.MangaDto;
-import com.ufpb.SwiftManga.src.model.Manga;
-import com.ufpb.SwiftManga.src.repository.MangaRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MangaService {
@@ -17,58 +22,80 @@ public class MangaService {
     @Autowired
     private MangaRepository mangaRepository;
 
-    public MangaDto createManga(MangaDto mangaDto) {
-         return toDto(mangaRepository.save(toManga(mangaDto)));
+    @Autowired
+    private UserRepository userRepository; // Injeção do UserRepository
+
+    public List<MangaDTO> findAllByUserId(Long userId) {
+        List<Manga> mangas = mangaRepository.findByUserId(userId);
+        return mangas.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    public List<MangaDto> getAllManga() {
-        return mangaRepository.findAll().stream().map(manga -> {
-            MangaDto dto = new MangaDto();
-            dto.setId(manga.getId());
-            dto.setTitle(manga.getTitle());
-            dto.setAuthor(manga.getAuthor());
-            dto.setVolume(manga.getVolume());
-            dto.setClassification(manga.getClassification());
-            return dto;
-        }).collect(Collectors.toList());
+    public Optional<MangaDTO> findById(Long id) {
+        Optional<Manga> manga = mangaRepository.findById(id);
+        return manga.map(this::convertToDTO);
     }
 
-    public MangaDto getMangaById(Long mangaId) {
-        return toDto(mangaRepository.findById(mangaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Manga not found with id: " + mangaId)));
+    public MangaDTO saveManga(MangaDTO mangaDTO) {
+        Manga manga = convertToEntity(mangaDTO);
+        manga = mangaRepository.save(manga);
+        return convertToDTO(manga);
     }
 
-    public MangaDto updateManga(Long mangaId, MangaDto mangaDto) {
-        Manga manga = mangaRepository.findById(mangaId)
-            .orElseThrow(() -> new ResourceNotFoundException("Manga not found with id: " + mangaId));
-        manga.setTitle(mangaDto.getTitle());
-        manga.setAuthor(mangaDto.getAuthor());
-        manga.setVolume(mangaDto.getVolume());
-        manga.setClassification(mangaDto.getClassification());
-        mangaRepository.save(manga);
-        return mangaDto;
+    public void deleteManga(Long id) {
+        mangaRepository.deleteById(id);
     }
 
-    public void deleteManga(Long mangaId) {
-        mangaRepository.deleteById(mangaId);
+// Em MangaService
+public MangaDTO convertToDTO(Manga manga) {
+    MangaDTO mangaDTO = new MangaDTO();
+    mangaDTO.setId(manga.getId());
+    mangaDTO.setTitle(manga.getTitle());
+    mangaDTO.setAuthor(manga.getAuthor());
+    mangaDTO.setVolume(manga.getVolume());
+    mangaDTO.setClassification(manga.getClassification());
+    mangaDTO.setDescription(manga.getDescription());
+    mangaDTO.setTags(manga.getTags());
+    mangaDTO.setLanguage(manga.getLanguage());
+    mangaDTO.setReleaseDate(manga.getReleaseDate());
+    mangaDTO.setUserId(manga.getUser().getId());
+    // Assuma que você está incluindo os gêneros corretamente
+    return mangaDTO;
+}
+
+    public HQDTO convertToDTO(HQ hq) {
+        HQDTO hqDTO = new HQDTO();
+        hqDTO.setId(hq.getId());
+        hqDTO.setTitle(hq.getTitle());
+        // Inclua outros campos conforme necessário
+        return hqDTO;
     }
 
-    public Manga toManga (MangaDto mangaDto) {
+    private Manga convertToEntity(MangaDTO mangaDTO) {
         Manga manga = new Manga();
-        manga.setTitle(mangaDto.getTitle());
-        manga.setAuthor(mangaDto.getAuthor());
-        manga.setVolume(mangaDto.getVolume());
-        manga.setClassification(mangaDto.getClassification());
+        if (mangaDTO.getId() != null) {
+            manga.setId(mangaDTO.getId()); // Define o ID apenas se já existir (caso de atualização)
+        }
+        manga.setTitle(mangaDTO.getTitle());
+        manga.setAuthor(mangaDTO.getAuthor());
+        manga.setVolume(mangaDTO.getVolume());
+        manga.setClassification(mangaDTO.getClassification());
+        manga.setDescription(mangaDTO.getDescription());   // Incluindo a descrição
+        manga.setTags(mangaDTO.getTags());                 // Incluindo as tags
+        manga.setLanguage(mangaDTO.getLanguage());         // Incluindo o idioma
+        manga.setReleaseDate(mangaDTO.getReleaseDate());   // Incluindo a data de lançamento
+    
+        // Buscar e configurar o usuário associado ao Manga
+        User user = userRepository.findById(mangaDTO.getUserId())
+                                  .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        manga.setUser(user);
+    
         return manga;
     }
 
-    public MangaDto toDto (Manga manga) {
-        MangaDto dto = new MangaDto();
-        dto.setId(manga.getId());
-        dto.setTitle(manga.getTitle());
-        dto.setAuthor(manga.getAuthor());
-        dto.setVolume(manga.getVolume());
-        dto.setClassification(manga.getClassification());
-        return dto;
+    private GenreDTO convertGenreToDTO(Genre genre) {
+        GenreDTO genreDTO = new GenreDTO();
+        genreDTO.setId(genre.getId());
+        genreDTO.setName(genre.getName());
+        return genreDTO;
     }
 }
