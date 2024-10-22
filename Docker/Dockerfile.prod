@@ -11,7 +11,7 @@ COPY pom.xml ./back/pom.xml
 RUN mvn dependency:go-offline
 
 # Copie o código-fonte da aplicação
-COPY src ./src
+COPY src ./back/src
 
 # Compile a aplicação
 RUN mvn clean package -DskipTests
