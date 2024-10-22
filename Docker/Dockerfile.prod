@@ -5,7 +5,7 @@ FROM maven:3-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 
 # Copie o arquivo pom.xml e as dependências do Maven
-COPY pom.xml ./back/pom.xml
+COPY back/pom.xml ./pom.xml
 
 # Baixe as dependências do Maven
 RUN mvn dependency:go-offline
